@@ -5,6 +5,8 @@ const COLORS = {
     '-1': 'orange'
 }
 
+const GRIDSIZE = 9;
+
 const WINSTATE = [
     [[0,0],[0,1],[0,2]],
     [[1,0], [1,1], [1,2]],
@@ -20,24 +22,28 @@ const WINSTATE = [
 let board;
 let turn;
 let winner;
+let gridTaken;
 
 
 /*----- cached elements  -----*/
-const cell00 = 'c0r0';
-const cell01 = 'c0r1';
-const cell02 = 'c0r2';
-const cell10 = 'c1r0';
-const cell11 = 'c1r1';
-const cell12 = 'c1r2';
-const cell20 = 'c2r0';
-const cell21 = 'c2r1';
-const cell22 = 'c2r2';
+const cachedBoardEl = {
+    '00': document.getElementById('c0r0'),
+    '01': document.getElementById('c0r1'),
+    '02': document.getElementById('c0r2'),
+    '10': document.getElementById('c1r0'),
+    '11': document.getElementById('c1r1'),
+    '12': document.getElementById('c1r2'),
+    '20': document.getElementById('c2r0'),
+    '21': document.getElementById('c2r1'),
+    '22': document.getElementById('c2r2')
+}
 
 const messageEl = document.querySelector('h1');
 const playAgainBtn = document.querySelector('button');
 
 /*----- event listeners -----*/
 document.getElementById('board').addEventListener('click', handleClick);
+playAgainBtn.addEventListener('click', init);
 
 /*----- functions -----*/
 init();
@@ -50,6 +56,7 @@ function init() {
     ];
     turn = 1;
     winner = null;
+    gridTaken = 0;
     render();
 }
 
@@ -84,5 +91,49 @@ function renderControls() {
 }
 
 function handleClick(evt) {
-    console.log(evt.target);
+    
+    let storeIdx = '';
+    for(const key in cachedBoardEl){
+        if (evt.target === cachedBoardEl[key]) {
+            storeIdx = key;
+            break;
+        }
+    }
+
+    const colIdx = storeIdx[0];
+    const rowIdx = storeIdx[1];
+
+    if (board[colIdx][rowIdx] !== 0) {
+        return;
+    }
+
+
+    if (winner) {
+        return;
+    }
+
+    board[colIdx][rowIdx] = turn;
+    turn *= -1;
+    gridTaken += 1;
+    winner = getWinner();
+
+    render();
 }
+
+function getWinner() {
+    for(let i = 0; i < WINSTATE.length; i++) {
+        if(Math.abs(board[WINSTATE[i][0][0]][WINSTATE[i][0][1]] + 
+                    board[WINSTATE[i][1][0]][WINSTATE[i][1][1]] +
+                    board[WINSTATE[i][2][0]][WINSTATE[i][2][1]]) === 3) {
+            return board[WINSTATE[i][0][0]][WINSTATE[i][0][1]];
+        }
+        
+    }
+    if (gridTaken === GRIDSIZE) {
+        return 'T';
+    }
+
+    return null;
+}
+
+
