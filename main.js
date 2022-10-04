@@ -27,15 +27,15 @@ let gridTaken;
 
 /*----- cached elements  -----*/
 const cachedBoardEl = {
-    '00': document.getElementById('c0r0'),
-    '01': document.getElementById('c0r1'),
-    '02': document.getElementById('c0r2'),
-    '10': document.getElementById('c1r0'),
-    '11': document.getElementById('c1r1'),
-    '12': document.getElementById('c1r2'),
-    '20': document.getElementById('c2r0'),
-    '21': document.getElementById('c2r1'),
-    '22': document.getElementById('c2r2')
+    '00': document.getElementById('00'),
+    '01': document.getElementById('01'),
+    '02': document.getElementById('02'),
+    '10': document.getElementById('10'),
+    '11': document.getElementById('11'),
+    '12': document.getElementById('12'),
+    '20': document.getElementById('20'),
+    '21': document.getElementById('21'),
+    '22': document.getElementById('22')
 }
 
 const messageEl = document.querySelector('h1');
@@ -69,7 +69,7 @@ function render() {
 function renderBoard() {
     board.forEach(function(colArr, colIdx) {
         colArr.forEach(function(cellVal, rowIdx) {
-            const cellId = `c${colIdx}r${rowIdx}`;
+            const cellId = `${colIdx}${rowIdx}`;
             const cellEl = document.getElementById(cellId);
             cellEl.style.backgroundColor = COLORS[cellVal];
         });
@@ -92,13 +92,20 @@ function renderControls() {
 
 function handleClick(evt) {
     
+    if(isNaN(parseInt(evt.target.id))) {
+        return;
+    }
+
     let storeIdx = '';
+    let tempUpdate = 0;
     for(const key in cachedBoardEl){
         if (evt.target === cachedBoardEl[key]) {
             storeIdx = key;
             break;
-        }
+        } 
+        tempUpdate +=1;
     }
+    
 
     const colIdx = storeIdx[0];
     const rowIdx = storeIdx[1];
